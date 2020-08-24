@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://laichao2018.github.io</id>
     <title>赖超的个人网站</title>
-    <updated>2020-08-24T07:18:11.501Z</updated>
+    <updated>2020-08-24T07:38:48.308Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://laichao2018.github.io"/>
     <link rel="self" href="https://laichao2018.github.io/atom.xml"/>
@@ -10,6 +10,23 @@
     <logo>https://laichao2018.github.io/images/avatar.png</logo>
     <icon>https://laichao2018.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 赖超的个人网站</rights>
+    <entry>
+        <title type="html"><![CDATA[关于博主]]></title>
+        <id>https://laichao2018.github.io/post/guan-yu-bo-zhu/</id>
+        <link href="https://laichao2018.github.io/post/guan-yu-bo-zhu/">
+        </link>
+        <updated>2020-08-24T07:37:49.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>👏👏👏欢迎来到我的个人主页</strong></p>
+<p>✍️✍️✍️**这里是我的平常学习记录和学习感悟 ~~~ **博客复兴</p>
+<h4 id="指南针️">指南针🎶🐱‍🐉🏄‍♂️</h4>
+<p><a href="https://github.com/LAICHAO2018">GitHub主页</a></p>
+<h4 id="个人技能">个人技能😘👨‍🎓🥝</h4>
+<blockquote>
+<p><strong>C++ 对于11/14版本的新特性有较强的熟练度，熟悉👍STL、Boost库与三大特性等</strong></p>
+<p>**HTML/CSS/JavaScript前端三大组件，使用过jQuery、Vue😝框架，有使用WampServer搭建部署Web服务器经验😎 **</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://laichao2018.github.io/post/hello-gridea/</id>
