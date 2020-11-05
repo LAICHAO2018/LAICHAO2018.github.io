@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://laichao2018.github.io</id>
     <title>赖超的个人网站</title>
-    <updated>2020-11-05T14:15:03.703Z</updated>
+    <updated>2020-11-05T14:19:46.535Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://laichao2018.github.io"/>
     <link rel="self" href="https://laichao2018.github.io/atom.xml"/>
@@ -23,7 +23,7 @@
 </ul>
 <h2 id="2-用法">2. 用法</h2>
 <h3 id="21-新增submodule"><strong>2.1. 新增submodule</strong></h3>
-<pre><code class="language-git">git submodule add $giturl $foldername
+<pre><code class="language-cpp">git submodule add $giturl $foldername
 </code></pre>
 <p>其中<font color=red>＄giturl</font>表示git仓库地址，<font color=red>＄foldername</font>表示submodule的目录名，例如：</p>
 <pre><code>git submodule add git://github.com/xx/A.git A
