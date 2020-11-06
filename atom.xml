@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://laichao2018.github.io</id>
     <title>赖超的个人网站</title>
-    <updated>2020-11-06T03:21:29.794Z</updated>
+    <updated>2020-11-06T07:04:33.703Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://laichao2018.github.io"/>
     <link rel="self" href="https://laichao2018.github.io/atom.xml"/>
@@ -52,16 +52,16 @@ pFun();
 (Fun)*((int*)*(int*)(&amp;b)+2); *// Base::h()*
 </code></pre>
 <p>画个图解释一下。如下所示:</p>
-<figure data-type="image" tabindex="1"><img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable1.jpg" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://laichao2018.github.io/post-images/1604645798579.jpg" alt="" loading="lazy"></figure>
 <p>注意：在上面这个图中，在虚函数表的最后多加了一个结点，这是虚函数表的结束结点，就像字符串的结束符“<em>/0</em>”一样，其标志了虚函数表的结束。这个结束标志的值在不同的编译器下是不同的。在<em>WinXP+VS2003</em>下，这个值是<em>NULL</em>。而在<em>Ubuntu 7.10 + Linux 2.6.22 + GCC 4.1.3</em>下，这个值是如果<em>1</em>，表示还有下一个虚函数表，如果值是<em>0</em>，表示是最后一个虚函数表。</p>
 <p>下面，将分别说明“无覆盖”和“有覆盖”时的虚函数表的样子。没有覆盖父类的虚函数是毫无意义的。我之所以要讲述没有覆盖的情况，主要目的是为了给一个对比。在比较之下，我们可以更加清楚地知道其内部的具体实现。</p>
 <h2 id="3-继承与虚函数表">3. 继承与虚函数表</h2>
 <h4 id="31-一般继承无虚函数覆盖">3.1 一般继承（无虚函数覆盖）</h4>
 <p>下面，再来看看继承时的虚函数表是什么样的。假设有如下所示的一个继承关系：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_Drawing3.jpg" alt="img" loading="lazy"><br>
+<img src="https://laichao2018.github.io/post-images/1604645833272.jpg" alt="" loading="lazy"><br>
 请注意，在这个继承关系中，子类没有重载任何父类的函数。那么，在派生类的实例中，其虚函数表如下所示<br>
 对于实例：Derive d; 的虚函数表如下：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable2.JPG" alt="img" loading="lazy"><br>
+<img src="https://laichao2018.github.io/post-images/1604645838066.JPG" alt="" loading="lazy"><br>
 我们可以看到下面几点：</p>
 <ol>
 <li>虚函数按照其声明顺序放于表中。</li>
@@ -69,9 +69,9 @@ pFun();
 </ol>
 <h4 id="32-一般继承有虚函数覆盖">3.2 一般继承（有虚函数覆盖）</h4>
 <p>覆盖父类的虚函数是很显然的事情，不然，虚函数就变得毫无意义。下面，我们来看一下，如果子类中有虚函数重载了父类的虚函数，会是一个什么样子？假设，有下面这样的一个继承关系。</p>
-<figure data-type="image" tabindex="2"><img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_Drawing4.jpg" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://laichao2018.github.io/post-images/1604645844186.jpg" alt="" loading="lazy"></figure>
 <p>为了看到被继承过后的效果，在这个类的设计中，只覆盖了父类的一个函数：f()。那么，对于派生类的实例，其虚函数表会是下面的一个样子：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable3.JPG" alt="img" loading="lazy"></p>
+<img src="https://laichao2018.github.io/post-images/1604645851133.JPG" alt="" loading="lazy"></p>
 <p>我们从表中可以看到下面几点，</p>
 <ol>
 <li>覆盖的f()函数被放到了虚表中原来父类虚函数的位置。</li>
@@ -83,22 +83,22 @@ b-&gt;f();
 </code></pre>
 <p>由b所指的内存中的虚函数表的<font color=red>f()</font>的位置已经被<font color=red>Derive::f()</font>函数地址所取代，于是在实际调用发生时，是Derive::f()被调用了。这就实现了多态。</p>
 <h4 id="33-多重继承无虚函数覆盖">3.3 多重继承（无虚函数覆盖）</h4>
-<p>下面，再看看多重继承中的情况，假设有下面这样一个类的继承关系。注意：子类并没有覆盖父类的函数：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_Drawing1.jpg" alt="img" loading="lazy"><br>
-对于子类实例中的虚函数表，是下面这个样子：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable4.JPG" alt="img" loading="lazy"><br>
-我们可以看到：</p>
+<p>下面，再看看多重继承中的情况，假设有下面这样一个类的继承关系。注意：子类并没有覆盖父类的函数：</p>
+<figure data-type="image" tabindex="3"><img src="https://laichao2018.github.io/post-images/1604645857538.png" alt="" loading="lazy"></figure>
+<p>对于子类实例中的虚函数表，是下面这个样子：</p>
+<figure data-type="image" tabindex="4"><img src="https://laichao2018.github.io/post-images/1604645862196.png" alt="" loading="lazy"></figure>
+<p>我们可以看到：</p>
 <ol>
 <li>每个父类都有自己的虚表。</li>
 <li>子类的成员函数被放到了第一个父类的表中。（所谓的第一个父类是按照声明顺序来判断的）<br>
 这样做就是为了解决不同的父类类型的指针指向同一个子类实例，而能够调用到实际的函数。</li>
 </ol>
 <h4 id="34-多重继承有虚函数覆盖">3.4 多重继承（有虚函数覆盖）</h4>
-<p>下面再来看看，如果发生虚函数覆盖的情况。下图中，我们在子类中覆盖了父类的f()函数。<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_Drawing2.jpg" alt="img" loading="lazy"><br>
-下面是对于子类实例中的虚函数表的图：<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable5.jpg" alt="img" loading="lazy"><br>
-可以看见，三个父类虚函数表中的f()的位置被替换成了子类的函数指针。这样，我们就可以任一静态类型的父类来指向子类，并调用子类的f()了。如：</p>
+<p>下面再来看看，如果发生虚函数覆盖的情况。下图中，我们在子类中覆盖了父类的f()函数。</p>
+<figure data-type="image" tabindex="5"><img src="https://laichao2018.github.io/post-images/1604645869560.png" alt="" loading="lazy"></figure>
+<p>下面是对于子类实例中的虚函数表的图：</p>
+<figure data-type="image" tabindex="6"><img src="https://laichao2018.github.io/post-images/1604645874974.jpg" alt="" loading="lazy"></figure>
+<p>可以看见，三个父类虚函数表中的f()的位置被替换成了子类的函数指针。这样，我们就可以任一静态类型的父类来指向子类，并调用子类的f()了。如：</p>
 <pre><code class="language-cpp">  Derive d;
         Base1 *b1 = &amp;d;
         Base2 *b2 = &amp;d;
@@ -143,7 +143,7 @@ void main() {
 <h2 id="6-附录">6. 附录</h2>
 <h4 id="61-vc中查看虚函数表">6.1 VC中查看虚函数表</h4>
 <p>以在VC的IDE环境中的Debug状态下展开类的实例就可以看到虚函数表了（并不是很完整的）<br>
-<img src="https://p-blog.csdn.net/images/p_blog_csdn_net/haoel/15190/o_vtable_vc.JPG" alt="img" loading="lazy"></p>
+<img src="https://laichao2018.github.io/post-images/1604645883090.JPG" alt="" loading="lazy"></p>
 <h4 id="62-例程">6.2 例程</h4>
 <p>下面是一个关于多重继承的虚函数表访问的例程：</p>
 <pre><code class="language-cpp">#include &lt;iostream&gt;
