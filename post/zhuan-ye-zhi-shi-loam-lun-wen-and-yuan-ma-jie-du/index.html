@@ -6,7 +6,7 @@
 
 <title>[专业知识] LOAM论文 &amp; 源码解读 | 赖超的个人网站</title>
 
-<link rel="shortcut icon" href="https://laichao2018.github.io/favicon.ico?v=1605230032673">
+<link rel="shortcut icon" href="https://laichao2018.github.io/favicon.ico?v=1605230294405">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://laichao2018.github.io/styles/main.css">
@@ -77,7 +77,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1605230032673" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1605230294405" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -123,7 +123,7 @@
 <ul>
 <li>
 <p><strong>a. ScanRegistration</strong>： 　　<br>
-　　根据VLP16的激光扫描模型, 对单帧点云（paper中称为一个Sweep）进行分线束（分为16束）, 每束称为一个Scan， 并记录每个点所属线束和每个点在此帧电云内的相对扫描时间（相对于本帧第一个点）。 　　针对单个Scan提取特征点,因为角分辨率越大, 代表越远的物体, 反射的两点距离越大, 中间丢失的信息越多。因此, LOAM没有针对Scan和Scan之间的点的关联性提取和描述特征, 而是直接针对单个Scan提取特征. 而相对时间会在laserOdometry中用于运动补偿.所有Scan的特征点,拼到两个点云中(因为是corner和surface两种特征点,所以是两个点云).至此,每帧点云,输出两帧对应的特征点云, 给下一个节点laserOdometry。</p>
+　　根据VLP16的激光扫描模型, 对单帧点云（paper中称为一个Sweep）进行分线束（分为16束）, 每束称为一个Scan， 并记录每个点所属线束和每个点在此帧电云内的相对扫描时间（相对于本帧第一个点）。 针对单个Scan提取特征点,因为角分辨率越大, 代表越远的物体, 反射的两点距离越大, 中间丢失的信息越多。因此, LOAM没有针对Scan和Scan之间的点的关联性提取和描述特征, 而是直接针对单个Scan提取特征. 而相对时间会在laserOdometry中用于运动补偿.所有Scan的特征点,拼到两个点云中(因为是corner和surface两种特征点,所以是两个点云).至此,每帧点云,输出两帧对应的特征点云, 给下一个节点laserOdometry。</p>
 </li>
 <li>
 <p><strong>b. laserOdometry</strong>:<br>
