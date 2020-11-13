@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://laichao2018.github.io</id>
     <title>赖超的个人网站</title>
-    <updated>2020-11-13T01:12:28.551Z</updated>
+    <updated>2020-11-13T01:13:54.614Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://laichao2018.github.io"/>
     <link rel="self" href="https://laichao2018.github.io/atom.xml"/>
@@ -98,7 +98,7 @@
 <p>注意有些注释的是LOAM，有些是A-LOAM，基本上LOAM的注释涵盖了A-LOAM</p>
 </blockquote>
 <ol>
-<li><a href="https://github.com/cuitaixiang/LOAM_NOTED">LOAM中文注释版</a>;</li>
+<li><a href="https://github.com/cuitaixiang/LOAM_NOTED">LOAM中文注释版</a></li>
 <li><a href="https://www.cnblogs.com/wellp/p/8877990.html">LOAM笔记及A-LOAM源码阅读</a></li>
 <li><a href="https://blog.csdn.net/liuyanpeng12333/article/details/82737181ALOAM">LOAM代码解析</a></li>
 <li><a href="https://blog.csdn.net/unlimitedai/article/details/105711240">试跑及程序注释</a></li>
