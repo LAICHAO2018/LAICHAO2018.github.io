@@ -6,7 +6,7 @@
 
 <title>[专业知识] LOAM论文 &amp; 源码解读 | 赖超的个人网站</title>
 
-<link rel="shortcut icon" href="https://laichao2018.github.io/favicon.ico?v=1605230294405">
+<link rel="shortcut icon" href="https://laichao2018.github.io/favicon.ico?v=1605230618026">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://laichao2018.github.io/styles/main.css">
@@ -77,7 +77,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1605230294405" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1605230618026" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -168,7 +168,7 @@
 <p>图中，分别表示前k次扫描的轨迹（蓝色曲线）和地图（黑色直线），而最新的轨迹为。将k+1次雷达扫描到通过Odometry得到的映射到地图坐标系中，得到了未经校准的地图，可以看出存在一定的误差，并没有与原有地图对齐。此时通过一次Lidar Mapping，可以消掉这部分的误差，从而校准位姿参数。<br>
 <img src="https://laichao2018.github.io/post-images/1605229356047.png" alt="" loading="lazy"><br>
 　　如上图所示，在Mapping时，LOAM维护了一个以当前位置为中心，具有多个block的子地图，论文中指出这个子地图是10m的立方体。当Lidar采集到的点落入到这个子地图的某些block时，将从这个子地图提取出去对应的block，然后在这些block中像特征点提取那样，提取当前扫描中角点和平面点近邻的对应点，但有不同之处，并不像第2小节那样提取2个近邻角点确定直线或者3个平面点确定平面，而是提取更多的点进行拟合，因为子地图是多次扫描构成的结果。<br>
-对于当前扫描的一个角点，提取对应子地图中多个近邻角点，通过奇异值分解求出这些角点的主方向，从而的到直线方程，从而计算点到直线距离；对于平面点，通过寻找最小特征值对应的向量得到拟合平面的法向量，从而计算点到平面距离。再进行优化，得到对齐扫描与子地图的位姿纠正参数，之后将原有的轨迹进行纠正，便得到了细化的轨迹。<br>
+　　对于当前扫描的一个角点，提取对应子地图中多个近邻角点，通过奇异值分解求出这些角点的主方向，从而的到直线方程，从而计算点到直线距离；对于平面点，通过寻找最小特征值对应的向量得到拟合平面的法向量，从而计算点到平面距离。再进行优化，得到对齐扫描与子地图的位姿纠正参数，之后将原有的轨迹进行纠正，便得到了细化的轨迹。<br>
 　　mapping算法的match跟odometry算法的match过程略有不同（主要体现在correspondence确定方式的不同），在 中提取特征点的方式跟之前一样，也就是根据c值判断一个点是edge or planar point，但是特征点的数量是odometry算法的10倍，然后在Qk中找特征点的correspondence，在odometry算法中，correspondence的确定是为了最快的计算速度（基于最近邻的思路找对应线以及对应面），而mapping算法是通过对特征点周围的点云簇进行PCA主成分分析（求点云簇的协方差矩阵的特征值和特征向量），来找到对应边和对应面。correspondence确定后的过程就跟之前一样了，实现将 配准到local map.</p>
 <h3 id="24-补充说明">2.4 补充说明</h3>
 <p>LOAM一文中提出，可以通过IMU进行辅助。所谓“辅助”就是在激光雷达两次扫描之间，利用IMU得到较为准确的变化轨迹，从而进行点云畸变的去除，从而不需要靠上次扫描获得的运动参数插值对这次的畸变进行去除，能够提升精度。但IMU的数据并没有参与到优化当中，所以IMU在LOAM算法中只起到了辅助作用，而后续一些其他3D激光雷达算法，例如LINS[3]，Lio-mapping[4]和LIO-SAM[5]等，利用IMU进行了紧耦合的优化，取得了更好的效果。</p>
