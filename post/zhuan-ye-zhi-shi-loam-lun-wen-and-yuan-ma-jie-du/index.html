@@ -1,0 +1,316 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>[专业知识] LOAM论文 &amp; 源码解读 | 赖超的个人网站</title>
+
+<link rel="shortcut icon" href="https://laichao2018.github.io/favicon.ico?v=1605229932614">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://laichao2018.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            赖超的个人网站
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="https://laichao2018.github.io/archives" class="menu gt-a-link">
+                            技术博客
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            刷题
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1605229932614" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    [专业知识] LOAM论文 &amp; 源码解读
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-11-13 ·
+                    </time>
+                    
+                        <a href="https://laichao2018.github.io/tag/YbrgXMpIA/" class="post-tags">
+                            # SLAM
+                        </a>
+                    
+                        <a href="https://laichao2018.github.io/tag/aEL2NTSmpB/" class="post-tags">
+                            # 专业知识
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<blockquote>
+<p>Ref:<br>
+<a href="https://www.cnblogs.com/wellp/p/8877990.html">https://www.cnblogs.com/wellp/p/8877990.html</a><br>
+<a href="https://blog.csdn.net/weixin_41690997/article/details/105563830?depth_1-">https://blog.csdn.net/weixin_41690997/article/details/105563830?depth_1-</a></p>
+</blockquote>
+</blockquote>
+<h2 id="介绍">介绍</h2>
+<p>LOAM[1]是Ji Zhang于2014年提出的使用激光雷达完成定位与三维建图的算法，即<strong>Lidar Odometry and Mapping</strong>。之后许多激光SLAM算法借鉴了LOAM中的一些思想（改进版的LOAM），可以说学习LOAM对学习3D激光SLAM很有帮助。<br>
+　　整个LOAM本质就是一个激光里程计，没有闭环检测，也就没有图优化框架在里面，该算法把SLAM问题分为两个算法同时运行，实现实时建图，一个odometry算法，10Hz；另一个mapping算法，1Hz。（LOAM<strong>核心思想</strong>是将定位和建图的分割，通过两个算法：一个是执行高频率的里程计但是低精度的运动估计（定位），另一个算法在比定位低一个数量级的频率执行匹配和配准点云信息（建图和校正里程计）。将这两个算法结合就获得了高精度、实时性的激光里程计。）两个算法都是从点云中提取尖锐的边（sharp edges）和平整表面（planar surface）特征点，然后进行特征匹配，来估计lidar的运动以及fine match with local map，匹配的过程核心思想还是基于距离的判断，LOAM里面的匹配（correspondence）并不是简单的feature point到feature point的，而是edge point 到 edge line以及planar point 到 planar patch，在后续运动估计中用到的dis也是点到线的距离以及点到面的距离，所以我感觉匹配的过程就像是一个基于feature的点到面（线）的ICP算法；当然odometry和mapping算法的edge line 和 planar patch的确定略有不同。<br>
+　　<strong>LOAM通过点云特征提取和点云匹配来解决低漂移和低计算的问题</strong>。我们知道匹配的问题分为scan-to-scan、scan-to-map、map-to-map。而三者各有特点，首先说scan-to-scan匹配：优点是计算量小速度快，缺点是误差累计大，长距离误差累计后地图就无法看了。map-to-map的匹配：优点是精度高，误差累计小；缺点就是计算量大，实时性压力大。scan-to-map的匹配居中。LOAM的优点就是很好地利用力匹配的优缺点，首先，虽然scan-to-scan匹配精度差，但是我们可以只是使用它做一个获取粗的里程计，用获取的结果用于去除匀速运动造成的运动畸变，由于scan-to-scan的计算量较小因此我们可以高频执行。其次，有了里程计校正后的点云数据，接下来我们就可以做一个map-to-map的匹配了。但是map-to-map存在计算量大的问题，因此 我们可以让其执行的频率降低。这样的高低频率结合就保证了计算量的同时又兼具了精度。<br>
+　　LOAM算法由四个节点构成。分别完成特征提取，高频低精度odom，低频高精度odom，双频odom融合的功能，每个节点以rosnode形式存在，也就是独立的进程<br>
+<font color=red><strong>LOAM的整体思想就是将复杂的SLAM问题分为：1. 高频的运动估计； 2. 低频的环境建图。</strong></font></p>
+<h3 id="11-节点简述">1.1 节点简述</h3>
+<ul>
+<li>
+<p><strong>a. ScanRegistration</strong>： 　　<br>
+　　根据VLP16的激光扫描模型, 对单帧点云（paper中称为一个Sweep）进行分线束（分为16束）, 每束称为一个Scan， 并记录每个点所属线束和每个点在此帧电云内的相对扫描时间（相对于本帧第一个点）。 　　针对单个Scan提取特征点,因为角分辨率越大, 代表越远的物体, 反射的两点距离越大, 中间丢失的信息越多。因此, LOAM没有针对Scan和Scan之间的点的关联性提取和描述特征, 而是直接针对单个Scan提取特征. 而相对时间会在laserOdometry中用于运动补偿.所有Scan的特征点,拼到两个点云中(因为是corner和surface两种特征点,所以是两个点云).至此,每帧点云,输出两帧对应的特征点云, 给下一个节点laserOdometry。</p>
+</li>
+<li>
+<p><strong>b. laserOdometry</strong>:<br>
+　　实现运动补偿和帧间配准.每帧激光都会参与（所以帧率同VLP16的扫描帧率，10hz）.通过对每一帧激光的配准,可以得到一个精度较差的ODOM,帧与帧配准的初始POSE可以由IMU得到，或者在没有IMU的时候由匀速运动模型(简单的说就是假设这一帧运动量与上一帧一致)得到。<br>
+本节点输出的ODOM频率为10hz.此ODOM的作用:<br>
+（a） 在laserMapping中用于位姿的预测。<br>
+（b） 在transformMaintenance中为laserMapping输出的低频ODOM提供插值,以获得高频(10HZ)的ODOM.<br>
+在实际应用中,帧间匹配实现的ODOM,可以由IMU, 视觉里程计,底盘编码器等替代.而运动补偿在高速场景是不可或缺的</p>
+</li>
+<li>
+<p><strong>C. laserMapping</strong>:<br>
+　　本节点使用实现一个较为完整的SLAM过程，主要工作：<br>
+（a）通过多帧的激光特征点云基于POSE拼接，形成特征点云地图。由于包含conrner和surface两种，所以要建立两种地图。<br>
+（b）将新入的帧与地图做配准，得到更精确的POSE，然后按照ａ进行建图。<br>
+实际过程中由于单帧计算量大，所以采取每隔几帧配准一次（比如没５帧配一次，也就是２Hz）。如果一帧配一次，transformMaintenance也就没有存在的意义。<br>
+这个地图可以作为离线地图。用作定位使用。<br>
+当然这个地图功能还不完善，比如没有回环检测，这时候可以参考LeGO-LOAM，此文运用iSAM和ICP实现回环检测和全局优化建图。</p>
+</li>
+</ul>
+<h2 id="2-算法">2 算法</h2>
+<h3 id="21-系统整体架构">2.1 系统整体架构</h3>
+<p>LOAM主要包含两个模块，一个是Lidar Odometry，即使用激光雷达做里程计计算两次扫描之间的位姿变换；另一个是Lidar Mapping，利用多次扫描的结果构建地图，细化位姿轨迹。由于Mapping部分计算量较大，所以计算频率较低（1Hz），由Mapping校准细化Odometry过程中计算出来的轨迹。</p>
+<h3 id="22-lidar-odometry算法">2.2 Lidar Odometry算法</h3>
+<p>Lidar Odometry是通过Lidar的两次扫描匹配，计算这两次扫描之间Lidar的位姿变换，从而用作里程计Odometry。既然提到了两次扫描的匹配，自然而然想到了经典的ICP算法。然而LOAM并没有采用全部的激光点进行匹配，而是筛选出了两类特征点，分别是角点和平面点。<br>
+　　所谓<strong>角点</strong>，是当前激光扫描线束上曲率较大的点；而<strong>平面点</strong>，即曲率较小的点。在匹配时，首先提取当前扫描中的角点和平面点，对于角点，可以认为是物理世界中直线元素的采样，所以计算到上一次扫描中对应直线的距离；而对于平面点，认为是物理世界平面元素的采样，所以计算到上一次扫描中对应平面的距离。通过不断优化，使距离最小，从而得到最优的位姿变换参数。</p>
+<h4 id="221-角点到直线距离的计算">2.2.1 角点到直线距离的计算</h4>
+<p>计算角点到对应直线距离时，需要确定对应直线的方程，才能够计算距离。作者认为，可以有如下假设：角点是雷达某个线束与物理世界两个平面夹角相交时的采样，那么这个线束相邻的雷达扫描线束也会与这个平面夹角相交，所以这个平面夹角的直线可以用前后两次扫描的角点进行标识。<br>
+<img src="https://laichao2018.github.io/post-images/1605228996151.png" alt="" loading="lazy">图1：两种特征点提取示意</p>
+<p>具体而言，当获得当前某一个角点时，首先根据假设的运动参数（上一次运动参数作为这一次优化的初始），计算这个角点在上一次扫描时的坐标，之后查找上一次扫描中最近邻的角点，并在相邻的雷达扫描线束中搜索最近的角点，从而得到了直线方程，便能够计算点到之间距离。</p>
+<h4 id="222-平面点到平面距离的计算">2.2.2 平面点到平面距离的计算</h4>
+<p>计算平面点到对应平面距离时，也需要首先拿到平面的方程，即平面上一点与平面的法向量。与角点对应直线搜索方式类似，首先找上一次扫描中最近邻的平面点，之后在同一个扫描线数和不同的线束上各提取一个平面点，这样共得到了3个不共线的平面点，唯一确定了平面，从而计算平面点到平面的距离。</p>
+<h4 id="223-一些其他细节">2.2.3 一些其他细节</h4>
+<ol>
+<li>在角点和平面点的选择上，为了使分布更加均匀，通常将激光雷达一圈的扫描均匀分成几个部分，分别在每个部分中提取曲率最大（角点）和最小（平面点）的几个点。</li>
+<li>在激光雷达的一次扫描过程中，由于运动，采集到的点云会有运动畸变，所以在LOAM中点云会通过预估的运动参数去畸变进行对齐</li>
+<li>雷达扫描到的一些数据点是不稳定的，作者认为有两种不稳定数据点，如下图所示。一种是采集面与扫描面基本平行，另一种是被遮挡。在获得一次激光雷达扫描的点云后，这两种不稳定点会被首先去除。</li>
+</ol>
+<p><img src="https://laichao2018.github.io/post-images/1605229321374.png" alt="" loading="lazy">图2：两种不稳定点示意</p>
+<h3 id="23-lidar-mapping算法">2.3 Lidar Mapping算法</h3>
+<p>Mapping部分的意义是，通过与多次扫描构成的地图进行匹配，得到Lidar Odometry中利用两帧之间计算位姿产生的漂移，从而对轨迹进行细化。如下图所示：</p>
+<p><img src="https://laichao2018.github.io/post-images/1605229335638.png" alt="" loading="lazy">图3：扫描的轨迹和地图</p>
+<p>图中，分别表示前k次扫描的轨迹（蓝色曲线）和地图（黑色直线），而最新的轨迹为。将k+1次雷达扫描到通过Odometry得到的映射到地图坐标系中，得到了未经校准的地图，可以看出存在一定的误差，并没有与原有地图对齐。此时通过一次Lidar Mapping，可以消掉这部分的误差，从而校准位姿参数。<br>
+<img src="https://laichao2018.github.io/post-images/1605229356047.png" alt="" loading="lazy"><br>
+　　如上图所示，在Mapping时，LOAM维护了一个以当前位置为中心，具有多个block的子地图，论文中指出这个子地图是10m的立方体。当Lidar采集到的点落入到这个子地图的某些block时，将从这个子地图提取出去对应的block，然后在这些block中像特征点提取那样，提取当前扫描中角点和平面点近邻的对应点，但有不同之处，并不像第2小节那样提取2个近邻角点确定直线或者3个平面点确定平面，而是提取更多的点进行拟合，因为子地图是多次扫描构成的结果。<br>
+对于当前扫描的一个角点，提取对应子地图中多个近邻角点，通过奇异值分解求出这些角点的主方向，从而的到直线方程，从而计算点到直线距离；对于平面点，通过寻找最小特征值对应的向量得到拟合平面的法向量，从而计算点到平面距离。再进行优化，得到对齐扫描与子地图的位姿纠正参数，之后将原有的轨迹进行纠正，便得到了细化的轨迹。<br>
+　　mapping算法的match跟odometry算法的match过程略有不同（主要体现在correspondence确定方式的不同），在 中提取特征点的方式跟之前一样，也就是根据c值判断一个点是edge or planar point，但是特征点的数量是odometry算法的10倍，然后在Qk中找特征点的correspondence，在odometry算法中，correspondence的确定是为了最快的计算速度（基于最近邻的思路找对应线以及对应面），而mapping算法是通过对特征点周围的点云簇进行PCA主成分分析（求点云簇的协方差矩阵的特征值和特征向量），来找到对应边和对应面。correspondence确定后的过程就跟之前一样了，实现将 配准到local map.</p>
+<h3 id="24-补充说明">2.4 补充说明</h3>
+<p>LOAM一文中提出，可以通过IMU进行辅助。所谓“辅助”就是在激光雷达两次扫描之间，利用IMU得到较为准确的变化轨迹，从而进行点云畸变的去除，从而不需要靠上次扫描获得的运动参数插值对这次的畸变进行去除，能够提升精度。但IMU的数据并没有参与到优化当中，所以IMU在LOAM算法中只起到了辅助作用，而后续一些其他3D激光雷达算法，例如LINS[3]，Lio-mapping[4]和LIO-SAM[5]等，利用IMU进行了紧耦合的优化，取得了更好的效果。</p>
+<h2 id="3-代码">3 代码</h2>
+<p>对简化版的<strong>开源代码A-LOAM</strong>进行简单介绍。<br>
+　　LOAM的作者曾经开源了LOAM的代码，但由于某些原因又取消了开源，现在网上也流传着一些当时的片段或者牛人的实现。而A-LOAM是LOAM的一个简化版本，去掉了IMU以及一些其他细节，采用了Eigen，ceres等替代了原有LOAM代码中的手动实现，非常适合学习LOAM思想，也适合新手入门3D激光SLAM。A-LOAM的链接是：https://github.com/HKUST-Aerial-Robotics/A-LOAM</p>
+<h3 id="31-代码概览">3.1 代码概览</h3>
+<p>A-LOAM代码通过ROS运行，主要有3个节点，分别是：ascanResigtration, alaserOdometry和alaserMapping，对应特征点提取、里程计计算和mapping细化三部分。整体的结构如下：</p>
+<p><img src="https://laichao2018.github.io/post-images/1605229368259.png" alt="" loading="lazy">图5 A-LOAM代码结构</p>
+<ul>
+<li>ascanResigtration：处理Lidar输入的点云，提取并发布角点、平面点以及简单处理后的完整点云；</li>
+<li>alaserOdometry：接收特征点，计算位姿参数（轨迹）并发布</li>
+<li>alaserMapping：接收Lidar的点云与Odometry计算的轨迹，进行细化，得到精确的轨迹和地图并发布</li>
+</ul>
+<h3 id="32-代码学习资料">3.2 代码学习资料</h3>
+<blockquote>
+<p>注意有些注释的是LOAM，有些是A-LOAM，基本上LOAM的注释涵盖了A-LOAM</p>
+</blockquote>
+<ol>
+<li><a href="https://github.com/cuitaixiang/LOAM_NOTED">LOAM中文注释版</a>;</li>
+<li><a href="https://www.cnblogs.com/wellp/p/8877990.html">LOAM笔记及A-LOAM源码阅读</a></li>
+<li><a href="https://blog.csdn.net/liuyanpeng12333/article/details/82737181ALOAM">LOAM代码解析</a></li>
+<li><a href="https://blog.csdn.net/unlimitedai/article/details/105711240">试跑及程序注释</a></li>
+<li><a href="https://blog.csdn.net/nksjc/article/details/76401092">文章，代码解读</a></li>
+</ol>
+<h3 id="33-其他">3.3 其他</h3>
+<ol>
+<li><a href="https://blog.csdn.net/kamfai_row/category_10126073.html">SLAM笔记</a></li>
+</ol>
+<h2 id="4-补充">4 补充</h2>
+<blockquote>
+<p>Low-drift and real-time lidar odometry and mapping</p>
+</blockquote>
+<p><strong>即LOAM，实现了低漂移运动估计在6自由度和低计算复杂度。</strong><br>
+使这种性能水平成为可能的关键思想是将寻求同时优化大量变量的典型复杂问题（如图1所示）划分为两个算法。一种算法在高频率但低保真度下执行里程计，以估计激光扫描仪在环境中移动的速度。虽然没有必要，但如果有一个IMU，它可以提供一个运动先验，并有助于解释总的，高频的运动。第二种算法以一个数量级的低频率运行，用于点云的精细匹配和配准。具体来说，这两种算法都提取出位于边缘和平面上的特征点，并将特征点分别与边缘线段和平面面片相匹配。在里程算法中，特征点的对应关系是通过保证计算速度来实现的，而在映射算法中则是通过保证精度来实现的。</p>
+<p>该方法首先解决了一个比较容易实现的在线速度估计问题，然后通过批量优化映射，得到高精度的运动估计和地图。并行算法结构保证了实时求解问题的可行性。此外，由于运动估计是在更高的频率下进行的，所以映射有足够的时间来提高精度。当交错运行比里程算法慢一个数量级时，映射算法包含大量特征点并使用足够多的迭代来收敛。<br>
+论文贡献：</p>
+<ul>
+<li>提出了一个采用双层优化的软件系统，在线估计自我运动并建立地图；</li>
+<li>我们精心实现了几何特征的检测和匹配，以满足系统的要求：里程计算法中的特征匹配粗糙且快速，以保证高频率，并且在映射算法中是精确而缓慢的，以确保低漂移；</li>
+<li>我们使用涵盖各种环境类型的大量数据集对该方法进行了彻底测试；</li>
+<li>我们真诚地尝试将我们的工作呈现到更详细的层次，以使读者能够重新实现该方法。</li>
+</ul>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://laichao2018.github.io/post/kai-fa-gong-ju-cmake-chang-yong-gong-neng/" class="post-title gt-a-link">
+                    [开发工具] CMake常用功能
+                </a>
+            </div>
+        
+
+        
+
+        
+            
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+<script>
+    // md5.min.js
+    !function(n){
+        "use strict";
+        function d(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)<<16|65535&r}
+        function f(n,t,r,e,o,u){return d((c=d(d(t,n),d(e,u)))<<(f=o)|c>>>32-f,r);var c,f}
+        function l(n,t,r,e,o,u,c){return f(t&r|~t&e,n,t,o,u,c)}
+        function v(n,t,r,e,o,u,c){return f(t&e|r&~e,n,t,o,u,c)}
+        function g(n,t,r,e,o,u,c){return f(t^r^e,n,t,o,u,c)}
+        function m(n,t,r,e,o,u,c){return f(r^(t|~e),n,t,o,u,c)}
+        function i(n,t){var r,e,o,u,c;n[t>>5]|=128<<t%32,n[14+(t+64>>>9<<4)]=t;var f=1732584193,i=-271733879,a=-1732584194,h=271733878;for(r=0;r<n.length;r+=16)f=l(e=f,o=i,u=a,c=h,n[r],7,-680876936),h=l(h,f,i,a,n[r+1],12,-389564586),a=l(a,h,f,i,n[r+2],17,606105819),i=l(i,a,h,f,n[r+3],22,-1044525330),f=l(f,i,a,h,n[r+4],7,-176418897),h=l(h,f,i,a,n[r+5],12,1200080426),a=l(a,h,f,i,n[r+6],17,-1473231341),i=l(i,a,h,f,n[r+7],22,-45705983),f=l(f,i,a,h,n[r+8],7,1770035416),h=l(h,f,i,a,n[r+9],12,-1958414417),a=l(a,h,f,i,n[r+10],17,-42063),i=l(i,a,h,f,n[r+11],22,-1990404162),f=l(f,i,a,h,n[r+12],7,1804603682),h=l(h,f,i,a,n[r+13],12,-40341101),a=l(a,h,f,i,n[r+14],17,-1502002290),f=v(f,i=l(i,a,h,f,n[r+15],22,1236535329),a,h,n[r+1],5,-165796510),h=v(h,f,i,a,n[r+6],9,-1069501632),a=v(a,h,f,i,n[r+11],14,643717713),i=v(i,a,h,f,n[r],20,-373897302),f=v(f,i,a,h,n[r+5],5,-701558691),h=v(h,f,i,a,n[r+10],9,38016083),a=v(a,h,f,i,n[r+15],14,-660478335),i=v(i,a,h,f,n[r+4],20,-405537848),f=v(f,i,a,h,n[r+9],5,568446438),h=v(h,f,i,a,n[r+14],9,-1019803690),a=v(a,h,f,i,n[r+3],14,-187363961),i=v(i,a,h,f,n[r+8],20,1163531501),f=v(f,i,a,h,n[r+13],5,-1444681467),h=v(h,f,i,a,n[r+2],9,-51403784),a=v(a,h,f,i,n[r+7],14,1735328473),f=g(f,i=v(i,a,h,f,n[r+12],20,-1926607734),a,h,n[r+5],4,-378558),h=g(h,f,i,a,n[r+8],11,-2022574463),a=g(a,h,f,i,n[r+11],16,1839030562),i=g(i,a,h,f,n[r+14],23,-35309556),f=g(f,i,a,h,n[r+1],4,-1530992060),h=g(h,f,i,a,n[r+4],11,1272893353),a=g(a,h,f,i,n[r+7],16,-155497632),i=g(i,a,h,f,n[r+10],23,-1094730640),f=g(f,i,a,h,n[r+13],4,681279174),h=g(h,f,i,a,n[r],11,-358537222),a=g(a,h,f,i,n[r+3],16,-722521979),i=g(i,a,h,f,n[r+6],23,76029189),f=g(f,i,a,h,n[r+9],4,-640364487),h=g(h,f,i,a,n[r+12],11,-421815835),a=g(a,h,f,i,n[r+15],16,530742520),f=m(f,i=g(i,a,h,f,n[r+2],23,-995338651),a,h,n[r],6,-198630844),h=m(h,f,i,a,n[r+7],10,1126891415),a=m(a,h,f,i,n[r+14],15,-1416354905),i=m(i,a,h,f,n[r+5],21,-57434055),f=m(f,i,a,h,n[r+12],6,1700485571),h=m(h,f,i,a,n[r+3],10,-1894986606),a=m(a,h,f,i,n[r+10],15,-1051523),i=m(i,a,h,f,n[r+1],21,-2054922799),f=m(f,i,a,h,n[r+8],6,1873313359),h=m(h,f,i,a,n[r+15],10,-30611744),a=m(a,h,f,i,n[r+6],15,-1560198380),i=m(i,a,h,f,n[r+13],21,1309151649),f=m(f,i,a,h,n[r+4],6,-145523070),h=m(h,f,i,a,n[r+11],10,-1120210379),a=m(a,h,f,i,n[r+2],15,718787259),i=m(i,a,h,f,n[r+9],21,-343485551),f=d(f,e),i=d(i,o),a=d(a,u),h=d(h,c);return[f,i,a,h]}
+        function a(n){var t,r="",e=32*n.length;for(t=0;t<e;t+=8)r+=String.fromCharCode(n[t>>5]>>>t%32&255);return r}
+        function h(n){var t,r=[];for(r[(n.length>>2)-1]=void 0,t=0;t<r.length;t+=1)r[t]=0;var e=8*n.length;for(t=0;t<e;t+=8)r[t>>5]|=(255&n.charCodeAt(t/8))<<t%32;return r}
+        function e(n){var t,r,e="0123456789abcdef",o="";for(r=0;r<n.length;r+=1)t=n.charCodeAt(r),o+=e.charAt(t>>>4&15)+e.charAt(15&t);return o}
+        function r(n){return unescape(encodeURIComponent(n))}
+        function o(n){return a(i(h(t=r(n)),8*t.length));var t}
+        function u(n,t){return function(n,t){var r,e,o=h(n),u=[],c=[];for(u[15]=c[15]=void 0,16<o.length&&(o=i(o,8*n.length)),r=0;r<16;r+=1)u[r]=909522486^o[r],c[r]=1549556828^o[r];return e=i(u.concat(h(t)),512+8*t.length),a(i(c.concat(e),640))}(r(n),r(t))}
+        function t(n,t,r){return t?r?u(t,n):e(u(t,n)):r?o(n):e(o(n))}
+        "function"==typeof define&&define.amd?define(function(){return t}):"object"==typeof module&&module.exports?module.exports=t:n.md5=t;
+    }(this);
+</script>
+
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '',
+    clientSecret: '',
+    repo: '',
+    owner: '',
+    admin: [''],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false       // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+            
+
+            
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first"><b>记录学习点滴，欢迎浏览</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://laichao2018.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
